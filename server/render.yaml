@@ -2,7 +2,7 @@ services:
   - type: web
     name: animezone-backend
     env: node
-    buildCommand: npm install
+    buildCommand: chmod +x build.sh && ./build.sh
     startCommand: npm start
     rootDir: server
     envVars:
