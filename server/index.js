@@ -12,7 +12,7 @@ const { initializeDatabase } = require('./database/init');
 const config = require('./config');
 
 const app = express();
-const PORT = config.port;
+const PORT = process.env.PORT || config.port || 5000;
 
 // Middleware
 app.use(helmet());
@@ -30,23 +30,41 @@ app.use('/api/episodes', episodeRoutes);
 
 // Ruta principal
 app.get('/', (req, res) => {
-  res.json({ message: 'API de Anime Streaming funcionando correctamente' });
+  res.json({ 
+    message: 'API de Anime Streaming funcionando correctamente',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+// Ruta de health check
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
 });
 
 // Manejo de errores
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Algo salió mal!' });
+  console.error('Error:', err.stack);
+  res.status(500).json({ 
+    error: 'Algo salió mal!',
+    message: err.message,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Inicializar base de datos y arrancar servidor
 initializeDatabase().then(() => {
-  app.listen(PORT, () => {
+  app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
-    console.log(`🌐 Dominio configurado: ${config.domain}`);
+    console.log(`🌐 Entorno: ${process.env.NODE_ENV || 'development'}`);
     console.log(`📺 API de Anime Streaming lista`);
-    console.log(`🔗 URL: http://${config.domain}:${PORT}`);
+    console.log(`🔗 URL: http://localhost:${PORT}`);
   });
 }).catch(err => {
   console.error('Error inicializando la base de datos:', err);
+  process.exit(1);
 }); 
