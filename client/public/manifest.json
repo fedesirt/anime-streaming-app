@@ -1,0 +1,20 @@
+{
+  "short_name": "AnimeZone",
+  "name": "AnimeZone - Tu Portal de Anime",
+  "icons": [
+    {
+      "src": "logo-simple.svg",
+      "sizes": "40x40",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "logo.svg",
+      "sizes": "200x60",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#ef4444",
+  "background_color": "#111827"
+}
