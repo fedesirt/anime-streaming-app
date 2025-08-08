@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { Search as SearchIcon, Filter, Star, Play } from 'lucide-react';
+import { Search as SearchIcon, Star, Play } from 'lucide-react';
 import { animeAPIService } from '../services/animeAPI.ts';
 
 interface Anime {

@@ -15,7 +15,7 @@ interface Anime {
   rating: number;
   image_url: string;
   video_url: string;
-  requires_subscription: boolean;
+  requires_premium: boolean;
 }
 
 interface Episode {
@@ -24,7 +24,7 @@ interface Episode {
   episode_number: number;
   description: string;
   video_url: string;
-  requires_subscription: boolean;
+  requires_premium: boolean;
 }
 
 const AnimeDetail: React.FC = () => {
@@ -97,7 +97,7 @@ const AnimeDetail: React.FC = () => {
     );
   }
 
-  const hasAccess = !anime.requires_subscription || (user && user.subscription_status === 'premium');
+  const hasAccess = !anime.requires_premium || (user && user.premium_access_status === 'premium');
 
   return (
     <div className="min-h-screen bg-gradient-dark">
@@ -148,7 +148,7 @@ const AnimeDetail: React.FC = () => {
                     {anime.status}
                   </div>
                   
-                  {anime.requires_subscription && (
+                  {anime.requires_premium && (
                     <div className="flex items-center space-x-1 bg-gradient-to-r from-yellow-500/90 to-orange-500/90 backdrop-blur-sm rounded-full px-3 py-1">
                       <Crown size={14} className="text-white" />
                       <span className="text-xs font-medium text-white">Premium</span>
@@ -182,11 +182,11 @@ const AnimeDetail: React.FC = () => {
                     </Link>
                   ) : (
                     <Link
-                      to="/subscription"
+                      to="/donations"
                       className="btn-primary"
                     >
                       <Crown className="w-5 h-5 mr-2" />
-                      Suscribirse
+                      Hacer Donación
                     </Link>
                   )}
                   
@@ -246,7 +246,7 @@ const AnimeDetail: React.FC = () => {
                       </div>
                       
                       <div className="flex items-center space-x-2">
-                        {episode.requires_subscription && (
+                        {episode.requires_premium && (
                           <Crown size={16} className="text-yellow-400" />
                         )}
                         
@@ -260,7 +260,7 @@ const AnimeDetail: React.FC = () => {
                           </Link>
                         ) : (
                           <Link
-                            to="/subscription"
+                            to="/donations"
                             className="btn-outline text-sm px-4 py-2"
                           >
                             <Crown className="w-4 h-4 mr-1" />

@@ -8,8 +8,10 @@ import Login from './pages/Login.tsx';
 import Register from './pages/Register.tsx';
 import Favorites from './pages/Favorites.tsx';
 import Search from './pages/Search.tsx';
-import Subscription from './pages/Subscription.tsx';
+import Donations from './pages/Donations.tsx';
 import EpisodePlayer from './pages/EpisodePlayer.tsx';
+import FreeContentSection from './components/FreeContentSection.tsx';
+import MonetizationDashboard from './pages/MonetizationDashboard.tsx';
 
 function App() {
   return (
@@ -25,8 +27,10 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/favorites" element={<Favorites />} />
               <Route path="/search" element={<Search />} />
-              <Route path="/subscription" element={<Subscription />} />
+              <Route path="/donations" element={<Donations />} />
               <Route path="/episode/:episodeId" element={<EpisodePlayer />} />
+              <Route path="/free-content" element={<FreeContentSection />} />
+              <Route path="/monetization" element={<MonetizationDashboard />} />
             </Routes>
           </main>
         </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext.tsx';
-import { Search, User, LogOut, Menu, X, Heart, Crown, Home } from 'lucide-react';
+import { Search, User, LogOut, Menu, X, Heart, Crown, Home, Play, DollarSign } from 'lucide-react';
 import Logo from './Logo.tsx';
 
 const Navbar: React.FC = () => {
@@ -65,10 +65,26 @@ const Navbar: React.FC = () => {
               <Heart size={20} />
               <span>Favoritos</span>
             </Link>
+            
+            <Link
+              to="/free-content"
+              className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors duration-200 hover:scale-105"
+            >
+              <Play size={20} />
+              <span>Gratis</span>
+            </Link>
+            
+            <Link
+              to="/monetization"
+              className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors duration-200 hover:scale-105"
+            >
+              <DollarSign size={20} />
+              <span>Ingresos</span>
+            </Link>
 
             {user ? (
               <div className="flex items-center space-x-4">
-                {user.subscription_status === 'premium' && (
+                {user.premium_access_status === 'premium' && (
                   <div className="flex items-center space-x-1 text-yellow-400">
                     <Crown size={16} />
                     <span className="text-sm font-medium">Premium</span>
@@ -155,6 +171,24 @@ const Navbar: React.FC = () => {
                 <Heart size={20} />
                 <span>Favoritos</span>
               </Link>
+              
+              <Link
+                to="/free-content"
+                className="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-lg transition-colors duration-200"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Play size={20} />
+                <span>Contenido Gratis</span>
+              </Link>
+              
+              <Link
+                to="/monetization"
+                className="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-lg transition-colors duration-200"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <DollarSign size={20} />
+                <span>Dashboard de Ingresos</span>
+              </Link>
 
               {user ? (
                 <div className="space-y-2">
@@ -164,7 +198,7 @@ const Navbar: React.FC = () => {
                     </div>
                     <div className="flex flex-col">
                       <span className="text-white font-medium">{user.username}</span>
-                      {user.subscription_status === 'premium' && (
+                      {user.premium_access_status === 'premium' && (
                         <div className="flex items-center space-x-1 text-yellow-400">
                           <Crown size={12} />
                           <span className="text-xs">Premium</span>

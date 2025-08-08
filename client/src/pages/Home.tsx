@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Play, Star, Heart, TrendingUp, Clock, Crown } from 'lucide-react';
 import { animeAPIService } from '../services/animeAPI.ts';
 import HeroLogo from '../components/HeroLogo.tsx';
+import DemoContentSection from '../components/DemoContentSection.tsx';
 
 interface Anime {
   id: number;
@@ -16,7 +17,7 @@ interface Anime {
   score?: number;
   image?: string;
   type?: string;
-  requires_subscription?: boolean;
+  requires_premium?: boolean;
 }
 
 const Home: React.FC = () => {
@@ -90,7 +91,7 @@ const Home: React.FC = () => {
         </div>
         
         {/* Premium badge */}
-        {anime.requires_subscription && (
+        {anime.requires_premium && (
           <div className="absolute top-3 left-3">
             <div className="flex items-center space-x-1 bg-gradient-to-r from-yellow-500/90 to-orange-500/90 backdrop-blur-sm rounded-full px-3 py-1 border border-yellow-400/50">
               <Crown size={14} className="text-white" />
@@ -167,9 +168,9 @@ const Home: React.FC = () => {
                   <TrendingUp className="w-5 h-5 mr-2" />
                   Explorar Animes
                 </Link>
-                <Link to="/subscription" className="btn-outline">
+                <Link to="/donations" className="btn-outline">
                   <Crown className="w-5 h-5 mr-2" />
-                  Suscripción Premium
+                  Hacer Donación
                 </Link>
               </div>
             </div>
@@ -235,7 +236,7 @@ const Home: React.FC = () => {
                 <Crown className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Contenido Premium</h3>
-              <p className="text-gray-400">Disfruta de animes exclusivos y sin anuncios con nuestra suscripción premium.</p>
+              <p className="text-gray-400">Disfruta de animes exclusivos y sin anuncios con acceso premium.</p>
             </div>
             
             <div className="card text-center">
@@ -248,6 +249,9 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Demo Content Section */}
+      <DemoContentSection />
     </div>
   );
 };

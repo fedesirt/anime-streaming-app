@@ -5,7 +5,7 @@ interface User {
   id: number;
   username: string;
   email: string;
-  subscription_status?: string;
+  premium_access_status?: string;
 }
 
 interface AuthContextType {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext.tsx';
 import { ArrowLeft, Play, Pause, Lock, Crown, Volume2, VolumeX, Maximize, SkipBack, SkipForward } from 'lucide-react';
@@ -10,7 +10,7 @@ interface Episode {
   episode_number: number;
   description: string;
   video_url: string;
-  requires_subscription: boolean;
+  requires_premium: boolean;
   anime_title: string;
   season_title: string;
   anime_image: string;
@@ -32,7 +32,7 @@ const EpisodePlayer: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentSeason, setCurrentSeason] = useState<number | null>(null);
-  const [watchProgress, setWatchProgress] = useState(0);
+  // const [watchProgress] = useState(0);
 
   // Estados para el reproductor
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -48,7 +48,7 @@ const EpisodePlayer: React.FC = () => {
       fetchEpisode();
       fetchSeasons();
     }
-  }, [episodeId]);
+  }, [episodeId, fetchEpisode, fetchSeasons]);
 
   useEffect(() => {
     if (currentSeason) {
@@ -85,9 +85,9 @@ const EpisodePlayer: React.FC = () => {
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
       video.removeEventListener('ended', handleEnded);
     };
-  }, []);
+  }, [handleProgress, handleComplete]);
 
-  const fetchEpisode = async () => {
+  const fetchEpisode = useCallback(async () => {
     try {
       const response = await axios.get(`/api/episodes/episode/${episodeId}`);
       setEpisode(response.data);
@@ -95,10 +95,10 @@ const EpisodePlayer: React.FC = () => {
       // Obtener progreso de reproducción si el usuario está autenticado
       if (user && token) {
         try {
-          const progressResponse = await axios.get(`/api/episodes/watch-progress/${episodeId}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          setWatchProgress(progressResponse.data.progress || 0);
+          // const progressResponse = await axios.get(`/api/episodes/watch-progress/${episodeId}`, {
+          //   headers: { Authorization: `Bearer ${token}` }
+          // });
+          // setWatchProgress(progressResponse.data.progress || 0);
         } catch (error) {
           console.error('Error obteniendo progreso:', error);
         }
@@ -108,9 +108,9 @@ const EpisodePlayer: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [episodeId, user, token]);
 
-  const fetchSeasons = async () => {
+  const fetchSeasons = useCallback(async () => {
     if (!episode) return;
     
     try {
@@ -122,7 +122,7 @@ const EpisodePlayer: React.FC = () => {
     } catch (error: any) {
       console.error('Error obteniendo temporadas:', error);
     }
-  };
+  }, [episode]);
 
   const fetchEpisodes = async (seasonId: number) => {
     try {
@@ -189,7 +189,7 @@ const EpisodePlayer: React.FC = () => {
   }
 
   // Verificar si el usuario tiene acceso al contenido premium
-  const hasAccess = !episode.requires_subscription || (user && user.subscription_status === 'premium');
+  const hasAccess = !episode.requires_premium || (user && user.premium_access_status === 'premium');
 
   // Funciones del reproductor
   const togglePlay = () => {
@@ -280,7 +280,7 @@ const EpisodePlayer: React.FC = () => {
             </div>
           </div>
           
-          {episode.requires_subscription && (
+          {episode.requires_premium && (
             <div className="flex items-center space-x-2 text-red-400">
               <Crown size={20} />
               <span className="text-sm">Premium</span>
@@ -407,14 +407,14 @@ const EpisodePlayer: React.FC = () => {
                     <Lock size={64} className="text-red-500 mx-auto mb-4" />
                     <h3 className="text-white text-xl font-bold mb-2">Contenido Premium</h3>
                     <p className="text-gray-400 mb-4">
-                      Este episodio requiere una suscripción premium
+                      Este episodio requiere acceso premium
                     </p>
-                    <button
-                      onClick={() => navigate('/subscription')}
-                      className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors"
-                    >
-                      Suscribirse
-                    </button>
+                                          <button
+                        onClick={() => navigate('/donations')}
+                        className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors"
+                      >
+                        Hacer Donación
+                      </button>
                   </div>
                 </div>
               )}
@@ -472,7 +472,7 @@ const EpisodePlayer: React.FC = () => {
                         <p className="font-medium">Episodio {ep.episode_number}</p>
                         <p className="text-sm opacity-75">{ep.title}</p>
                       </div>
-                      {ep.requires_subscription && (
+                      {ep.requires_premium && (
                         <Crown size={16} className="text-red-400" />
                       )}
                     </div>

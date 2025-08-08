@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext.tsx';
 import { useNavigate } from 'react-router-dom';
 import { Crown, Check, CreditCard, Calendar, Star } from 'lucide-react';
 import axios from 'axios';
 
-interface Plan {
+interface DonationOption {
   id: number;
   name: string;
   price: number;
@@ -12,7 +12,7 @@ interface Plan {
   features: string;
 }
 
-interface UserSubscription {
+interface UserDonation {
   id: number;
   plan_name: string;
   start_date: string;
@@ -21,13 +21,13 @@ interface UserSubscription {
   status: string;
 }
 
-const Subscription: React.FC = () => {
+const Donations: React.FC = () => {
   const { user, token } = useAuth();
   const navigate = useNavigate();
-  const [plans, setPlans] = useState<Plan[]>([]);
-  const [currentSubscription, setCurrentSubscription] = useState<UserSubscription | null>(null);
+  const [donationOptions, setDonationOptions] = useState<DonationOption[]>([]);
+  const [currentDonation, setCurrentDonation] = useState<UserDonation | null>(null);
   const [loading, setLoading] = useState(true);
-  const [subscribing, setSubscribing] = useState(false);
+  const [donating, setDonating] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -37,41 +37,41 @@ const Subscription: React.FC = () => {
       return;
     }
 
-    fetchPlans();
-    fetchCurrentSubscription();
-  }, [user, navigate]);
+    fetchDonationOptions();
+    fetchCurrentDonation();
+  }, [user, navigate, fetchDonationOptions, fetchCurrentDonation]);
 
-  const fetchPlans = async () => {
+  const fetchDonationOptions = useCallback(async () => {
     try {
-      const response = await axios.get('/api/subscriptions/plans');
-      setPlans(response.data);
+      const response = await axios.get('/api/donations/options');
+      setDonationOptions(response.data);
     } catch (error: any) {
-      setError('Error al cargar los planes');
+      setError('Error al cargar las opciones de donación');
     }
-  };
+  }, []);
 
-  const fetchCurrentSubscription = async () => {
+  const fetchCurrentDonation = useCallback(async () => {
     try {
-      const response = await axios.get('/api/subscriptions/current', {
+      const response = await axios.get('/api/donations/current', {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setCurrentSubscription(response.data.subscription);
+      setCurrentDonation(response.data.donation);
     } catch (error: any) {
-      console.error('Error fetching subscription:', error);
+      console.error('Error fetching donation:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
-  const handleSubscribe = async (planId: number) => {
-    setSubscribing(true);
+  const handleDonate = async (optionId: number) => {
+    setDonating(true);
     setError('');
     setSuccess('');
 
     try {
-      // Crear preferencia de pago con Mercado Pago
-      const response = await axios.post('/api/payments/create-preference', 
-        { planId },
+      // Crear donación con Mercado Pago
+      const response = await axios.post('/api/payments/create-donation', 
+        { planId: optionId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
@@ -79,26 +79,26 @@ const Subscription: React.FC = () => {
       window.location.href = response.data.initPoint;
       
     } catch (error: any) {
-      setError(error.response?.data?.error || 'Error al procesar el pago');
-      setSubscribing(false);
+      setError(error.response?.data?.error || 'Error al procesar la donación');
+      setDonating(false);
     }
   };
 
-  const handleCancelSubscription = async () => {
-    if (!window.confirm('¿Estás seguro de que quieres cancelar tu suscripción?')) {
+  const handleCancelDonation = async () => {
+    if (!window.confirm('¿Estás seguro de que quieres cancelar tu acceso premium?')) {
       return;
     }
 
     try {
-      await axios.post('/api/subscriptions/cancel', {}, {
+      await axios.post('/api/donations/cancel', {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      setSuccess('Suscripción cancelada exitosamente');
-      fetchCurrentSubscription();
+      setSuccess('Acceso premium cancelado exitosamente');
+      fetchCurrentDonation();
       
     } catch (error: any) {
-      setError(error.response?.data?.error || 'Error al cancelar la suscripción');
+      setError(error.response?.data?.error || 'Error al cancelar el acceso premium');
     }
   };
 
@@ -116,10 +116,10 @@ const Subscription: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-white mb-4">
-            Planes de Suscripción
+            Opciones de Donación
           </h1>
           <p className="text-gray-300 text-lg">
-            Elige el plan que mejor se adapte a tus necesidades
+            Apoya el proyecto y obtén acceso premium a todo el contenido
           </p>
         </div>
 
@@ -136,73 +136,62 @@ const Subscription: React.FC = () => {
           </div>
         )}
 
-        {/* Suscripción actual */}
-        {currentSubscription && (
+        {/* Acceso premium actual */}
+        {currentDonation && (
           <div className="bg-gradient-to-r from-red-600 to-red-700 p-6 rounded-lg mb-8">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-bold text-white mb-2">
-                  Tu Suscripción Actual
+                  Tu Acceso Premium Actual
                 </h3>
                 <p className="text-red-100">
-                  Plan: <span className="font-semibold">{currentSubscription.plan_name}</span>
+                  Donación: <span className="font-semibold">{currentDonation.plan_name}</span>
                 </p>
                 <p className="text-red-100">
-                  Válida hasta: {new Date(currentSubscription.end_date).toLocaleDateString()}
+                  Válido hasta: {new Date(currentDonation.end_date).toLocaleDateString()}
                 </p>
               </div>
               <button
-                onClick={handleCancelSubscription}
+                onClick={handleCancelDonation}
                 className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition-colors"
               >
-                Cancelar Suscripción
+                Cancelar Acceso
               </button>
             </div>
           </div>
         )}
 
-        {/* Planes */}
-        <div className="grid md:grid-cols-3 gap-8">
-          {plans.map((plan) => (
+        {/* Opciones de donación */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {donationOptions.map((option) => (
             <div
-              key={plan.id}
-              className={`bg-dark-800 rounded-lg p-6 border-2 transition-all hover:scale-105 ${
-                plan.price > 0 
-                  ? 'border-red-500 hover:border-red-400' 
-                  : 'border-gray-600 hover:border-gray-500'
-              }`}
+              key={option.id}
+              className="bg-dark-800 rounded-lg p-6 border-2 transition-all hover:scale-105 border-red-500 hover:border-red-400"
             >
-              {/* Header del plan */}
+              {/* Header de la opción */}
               <div className="text-center mb-6">
-                {plan.price > 0 && (
-                  <div className="inline-flex items-center bg-red-500 text-white px-3 py-1 rounded-full text-sm mb-4">
-                    <Crown className="w-4 h-4 mr-2" />
-                    Premium
-                  </div>
-                )}
+                <div className="inline-flex items-center bg-red-500 text-white px-3 py-1 rounded-full text-sm mb-4">
+                  <Crown className="w-4 h-4 mr-2" />
+                  Premium
+                </div>
                 
                 <h3 className="text-2xl font-bold text-white mb-2">
-                  {plan.name}
+                  {option.name}
                 </h3>
                 
-                                 <div className="text-3xl font-bold text-white mb-1">
-                   ${plan.price.toLocaleString('es-AR')}
-                   <span className="text-lg text-gray-400">
-                     {plan.duration_days > 0 ? '/mes' : ''}
-                   </span>
-                 </div>
+                <div className="text-3xl font-bold text-white mb-1">
+                  ${option.price.toLocaleString('es-AR')}
+                </div>
                 
-                {plan.duration_days > 0 && (
-                  <p className="text-gray-400">
-                    {plan.duration_days === 30 ? 'Mensual' : 'Anual'}
-                  </p>
-                )}
+                <p className="text-gray-400">
+                  {option.duration_days} días de acceso
+                </p>
               </div>
 
               {/* Características */}
               <div className="mb-6">
                 <ul className="space-y-3">
-                  {plan.features.split(',').map((feature, index) => (
+                  {option.features.split(',').map((feature, index) => (
                     <li key={index} className="flex items-center text-gray-300">
                       <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
                       {feature.trim()}
@@ -213,24 +202,20 @@ const Subscription: React.FC = () => {
 
               {/* Botón de acción */}
               <div className="text-center">
-                {currentSubscription ? (
+                {currentDonation ? (
                   <button
                     disabled
                     className="bg-gray-600 text-gray-400 px-6 py-3 rounded-lg cursor-not-allowed"
                   >
-                    Ya tienes una suscripción
+                    Ya tienes acceso premium
                   </button>
                 ) : (
                   <button
-                    onClick={() => handleSubscribe(plan.id)}
-                    disabled={subscribing || plan.price === 0}
-                                         className={`w-full px-6 py-3 rounded-lg font-semibold transition-colors ${
-                       plan.price > 0
-                         ? 'bg-red-600 hover:bg-red-700 text-white'
-                         : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                     }`}
-                   >
-                     {subscribing ? 'Procesando...' : plan.price === 0 ? 'Plan Gratuito' : `Pagar $${plan.price.toLocaleString('es-AR')}`}
+                    onClick={() => handleDonate(option.id)}
+                    disabled={donating}
+                    className="w-full px-6 py-3 rounded-lg font-semibold transition-colors bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    {donating ? 'Procesando...' : `Donar $${option.price.toLocaleString('es-AR')}`}
                   </button>
                 )}
               </div>
@@ -241,7 +226,7 @@ const Subscription: React.FC = () => {
         {/* Información adicional */}
         <div className="mt-12 bg-dark-800 rounded-lg p-6">
           <h3 className="text-xl font-bold text-white mb-4">
-            ¿Por qué suscribirse?
+            ¿Por qué hacer una donación?
           </h3>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="flex items-start">
@@ -269,7 +254,7 @@ const Subscription: React.FC = () => {
               <div>
                 <h4 className="text-white font-semibold mb-2">Cancelación Gratuita</h4>
                 <p className="text-gray-300">
-                  Cancela tu suscripción en cualquier momento sin penalización
+                  Cancela tu acceso premium en cualquier momento sin penalización
                 </p>
               </div>
             </div>
@@ -290,4 +275,5 @@ const Subscription: React.FC = () => {
   );
 };
 
-export default Subscription;
+export default Donations;
+
