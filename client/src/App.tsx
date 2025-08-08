@@ -13,6 +13,7 @@ import Donations from './pages/Donations.tsx';
 import EpisodePlayer from './pages/EpisodePlayer.tsx';
 import FreeContentSection from './components/FreeContentSection.tsx';
 import MonetizationDashboard from './pages/MonetizationDashboard.tsx';
+import Terms from './pages/Terms.tsx';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
               <Route path="/episode/:episodeId" element={<EpisodePlayer />} />
               <Route path="/free-content" element={<FreeContentSection />} />
               <Route path="/monetization" element={<MonetizationDashboard />} />
+              <Route path="/terms" element={<Terms />} />
             </Routes>
           </main>
         </div>

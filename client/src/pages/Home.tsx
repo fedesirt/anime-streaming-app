@@ -564,6 +564,44 @@ const Home: React.FC = () => {
 
         {/* Demo Content Section */}
         <DemoContentSection />
+
+        {/* Disclaimer Legal */}
+        <section className="py-8 relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-gray-800/30 rounded-2xl p-6 border border-gray-700">
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center">
+                <span className="text-yellow-400 mr-2">⚠️</span>
+                Aviso Legal
+              </h3>
+              <div className="text-gray-300 text-sm space-y-2">
+                <p>
+                  <strong className="text-white">Propósito Educativo:</strong> Esta página es un proyecto de desarrollo web con fines educativos y de portfolio.
+                </p>
+                <p>
+                  <strong className="text-white">Derechos de Autor:</strong> Todo el contenido mostrado (animes, series, imágenes) pertenece a sus respectivos propietarios. No tenemos derechos de reproducción.
+                </p>
+                <p>
+                  <strong className="text-white">Sin Reproducción:</strong> Esta plataforma no reproduce contenido real, solo muestra información y diseños de interfaz.
+                </p>
+                <p>
+                  <strong className="text-white">Créditos:</strong> Las imágenes utilizadas provienen de Unsplash y están bajo licencia Creative Commons.
+                </p>
+                <div className="mt-4 pt-4 border-t border-gray-600">
+                  <Link 
+                    to="/terms" 
+                    className="inline-flex items-center text-purple-400 hover:text-purple-300 transition-colors duration-300 text-sm"
+                  >
+                    <span className="mr-2">📋</span>
+                    Ver Términos y Condiciones Completos
+                  </Link>
+                </div>
+                <p className="text-xs text-gray-400 mt-4">
+                  © 2024 AnimeZone - Proyecto de Desarrollo Web Educativo
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );
