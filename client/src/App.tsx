@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/AuthContext.tsx';
 import Navbar from './components/Navbar.tsx';
 import Home from './pages/Home.tsx';
 import AnimeDetail from './pages/AnimeDetail.tsx';
+import CartoonDetail from './pages/CartoonDetail.tsx';
 import Login from './pages/Login.tsx';
 import Register from './pages/Register.tsx';
 import Favorites from './pages/Favorites.tsx';
@@ -23,6 +24,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/anime/:id" element={<AnimeDetail />} />
+              <Route path="/cartoon/:id" element={<CartoonDetail />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/favorites" element={<Favorites />} />

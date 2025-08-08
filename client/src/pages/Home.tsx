@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Star, Heart, TrendingUp, Clock, Crown, Sparkles, Zap, Target } from 'lucide-react';
+import { Play, Star, Heart, TrendingUp, Clock, Crown, Sparkles, Zap, Target, Tv, Film, Users, Award } from 'lucide-react';
 import { animeAPIService } from '../services/animeAPI.ts';
 import HeroLogo from '../components/HeroLogo.tsx';
 import DemoContentSection from '../components/DemoContentSection.tsx';
@@ -20,26 +20,190 @@ interface Anime {
   requires_premium?: boolean;
 }
 
+interface Cartoon {
+  id: number;
+  title: string;
+  network: string;
+  genre: string;
+  year: number;
+  episodes: number;
+  status: string;
+  score: number;
+  image: string;
+  description: string;
+}
+
 const Home: React.FC = () => {
   const [popularAnime, setPopularAnime] = useState<Anime[]>([]);
+  const [cartoons, setCartoons] = useState<Cartoon[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPopularAnime = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await animeAPIService.getPopularAnime();
-        setPopularAnime(data.slice(0, 6));
+        const animeData = await animeAPIService.getPopularAnime();
+        setPopularAnime(animeData.slice(0, 6));
+
+        // Datos de dibujos animados y series
+        const cartoonsData: Cartoon[] = [
+          {
+            id: 1,
+            title: "South Park",
+            network: "Comedy Central",
+            genre: "Comedia",
+            year: 1997,
+            episodes: 300,
+            status: "En emisión",
+            score: 8.7,
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+            description: "Serie de animación para adultos que satiriza la sociedad estadounidense."
+          },
+          {
+            id: 2,
+            title: "Ben 10",
+            network: "Cartoon Network",
+            genre: "Acción/Aventura",
+            year: 2005,
+            episodes: 52,
+            status: "Completado",
+            score: 8.2,
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+            description: "Un niño de 10 años encuentra un reloj alienígena que le da poderes."
+          },
+          {
+            id: 3,
+            title: "Avatar: La Leyenda de Aang",
+            network: "Nickelodeon",
+            genre: "Fantasía/Aventura",
+            year: 2005,
+            episodes: 61,
+            status: "Completado",
+            score: 9.3,
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+            description: "Un joven avatar debe dominar los cuatro elementos para salvar el mundo."
+          },
+          {
+            id: 4,
+            title: "Phineas y Ferb",
+            network: "Disney Channel",
+            genre: "Comedia/Aventura",
+            year: 2007,
+            episodes: 222,
+            status: "Completado",
+            score: 8.1,
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+            description: "Dos hermanos que crean inventos increíbles durante las vacaciones de verano."
+          },
+          {
+            id: 5,
+            title: "Gravity Falls",
+            network: "Disney Channel",
+            genre: "Misterio/Comedia",
+            year: 2012,
+            episodes: 40,
+            status: "Completado",
+            score: 8.9,
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+            description: "Dos gemelos descubren misterios sobrenaturales en un pequeño pueblo."
+          },
+          {
+            id: 6,
+            title: "Rick y Morty",
+            network: "Adult Swim",
+            genre: "Ciencia Ficción/Comedia",
+            year: 2013,
+            episodes: 51,
+            status: "En emisión",
+            score: 9.2,
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+            description: "Un científico loco y su nieto viajan por dimensiones paralelas."
+          },
+          {
+            id: 7,
+            title: "Steven Universe",
+            network: "Cartoon Network",
+            genre: "Fantasía/Aventura",
+            year: 2013,
+            episodes: 160,
+            status: "Completado",
+            score: 8.5,
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+            description: "Un niño mitad humano, mitad gema descubre sus poderes y su herencia."
+          },
+          {
+            id: 8,
+            title: "Adventure Time",
+            network: "Cartoon Network",
+            genre: "Fantasía/Aventura",
+            year: 2010,
+            episodes: 283,
+            status: "Completado",
+            score: 8.6,
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+            description: "Un niño y su perro mágico exploran la Tierra post-apocalíptica."
+          },
+          {
+            id: 9,
+            title: "The Simpsons",
+            network: "Fox",
+            genre: "Comedia",
+            year: 1989,
+            episodes: 750,
+            status: "En emisión",
+            score: 8.7,
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+            description: "La familia más famosa de Springfield en situaciones cómicas."
+          },
+          {
+            id: 10,
+            title: "Futurama",
+            network: "Fox",
+            genre: "Ciencia Ficción/Comedia",
+            year: 1999,
+            episodes: 140,
+            status: "Completado",
+            score: 8.4,
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+            description: "Un repartidor de pizza es congelado y despierta en el año 3000."
+          },
+          {
+            id: 11,
+            title: "Family Guy",
+            network: "Fox",
+            genre: "Comedia",
+            year: 1999,
+            episodes: 400,
+            status: "En emisión",
+            score: 8.1,
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+            description: "La familia Griffin en situaciones absurdas y cómicas."
+          },
+          {
+            id: 12,
+            title: "American Dad!",
+            network: "Fox",
+            genre: "Comedia",
+            year: 2005,
+            episodes: 350,
+            status: "En emisión",
+            score: 7.8,
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop",
+            description: "Un agente de la CIA y su familia extraterrestre en situaciones cómicas."
+          }
+        ];
+        
+        setCartoons(cartoonsData);
       } catch (err) {
-        setError('Error al cargar los animes populares');
-        console.error('Error fetching popular anime:', err);
+        setError('Error al cargar el contenido');
+        console.error('Error fetching data:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPopularAnime();
+    fetchData();
   }, []);
 
   if (loading) {
@@ -132,7 +296,7 @@ const Home: React.FC = () => {
                 </div>
 
                 <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-                  Explora miles de episodios de tus animes favoritos en la mejor calidad. 
+                  Explora miles de episodios de tus animes favoritos y series de dibujos animados en la mejor calidad. 
                   Desde clásicos hasta las últimas novedades con efectos visuales espectaculares.
                 </p>
 
@@ -141,7 +305,7 @@ const Home: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="relative flex items-center">
                       <TrendingUp className="w-5 h-5 mr-2" />
-                      Explorar Animes
+                      Explorar Contenido
                     </div>
                   </Link>
                   <Link to="/donations" className="btn-outline group relative overflow-hidden">
@@ -153,6 +317,112 @@ const Home: React.FC = () => {
                   </Link>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Sección de dibujos animados y series */}
+        <section className="py-16 relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-white mb-4 relative">
+                <span className="bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  Dibujos Animados & Series
+                </span>
+                <div className="absolute -top-2 -right-2 w-4 h-4 bg-green-400 rounded-full animate-ping"></div>
+              </h2>
+              <p className="text-gray-300 text-lg mb-6">Descubre las mejores series de Disney XD, Cartoon Network, Jetix y más</p>
+              
+              {/* Iconos de redes */}
+              <div className="flex justify-center space-x-8 mb-8">
+                <div className="flex items-center space-x-2 text-green-400">
+                  <Tv className="w-5 h-5" />
+                  <span className="text-sm font-medium">Disney XD</span>
+                </div>
+                <div className="flex items-center space-x-2 text-blue-400">
+                  <Film className="w-5 h-5" />
+                  <span className="text-sm font-medium">Cartoon Network</span>
+                </div>
+                <div className="flex items-center space-x-2 text-purple-400">
+                  <Users className="w-5 h-5" />
+                  <span className="text-sm font-medium">Comedy Central</span>
+                </div>
+                <div className="flex items-center space-x-2 text-yellow-400">
+                  <Award className="w-5 h-5" />
+                  <span className="text-sm font-medium">Adult Swim</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {cartoons.map((cartoon) => (
+                <div
+                  key={cartoon.id}
+                  className="group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-6 hover:from-green-800/30 hover:to-blue-800/30 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 overflow-hidden"
+                >
+                  {/* Efectos de luz en las tarjetas */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-white group-hover:text-green-300 transition-colors duration-300 line-clamp-1">
+                        {cartoon.title}
+                      </h3>
+                      <div className="flex items-center text-yellow-400">
+                        <Star className="w-4 h-4 mr-1" />
+                        <span className="text-sm font-medium">{cartoon.score}</span>
+                      </div>
+                    </div>
+
+                    <div className="relative mb-4 rounded-lg overflow-hidden">
+                      <img
+                        src={cartoon.image}
+                        alt={cartoon.title}
+                        className="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between text-sm text-gray-400 mb-2">
+                        <span className="bg-green-500/20 text-green-300 px-2 py-1 rounded-full text-xs">
+                          {cartoon.network}
+                        </span>
+                        <span className="text-xs">{cartoon.year}</span>
+                      </div>
+                      <p className="text-gray-300 text-sm line-clamp-2 mb-3">
+                        {cartoon.description}
+                      </p>
+                      <div className="flex items-center justify-between text-xs text-gray-400">
+                        <span>{cartoon.episodes} episodios</span>
+                        <span className={`px-2 py-1 rounded-full ${
+                          cartoon.status === 'En emisión' 
+                            ? 'bg-green-500/20 text-green-300' 
+                            : 'bg-blue-500/20 text-blue-300'
+                        }`}>
+                          {cartoon.status}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <span className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">
+                          {cartoon.genre}
+                        </span>
+                      </div>
+                      <Link
+                        to={`/cartoon/${cartoon.id}`}
+                        className="flex items-center text-green-400 hover:text-green-300 transition-colors duration-300"
+                      >
+                        <Play className="w-4 h-4 mr-1" />
+                        <span className="text-sm">Ver</span>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -245,7 +515,7 @@ const Home: React.FC = () => {
                   Características Destacadas
                 </span>
               </h2>
-              <p className="text-gray-300 text-lg">Todo lo que necesitas para disfrutar del mejor anime</p>
+              <p className="text-gray-300 text-lg">Todo lo que necesitas para disfrutar del mejor contenido</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -253,12 +523,12 @@ const Home: React.FC = () => {
                 {
                   icon: <Play className="w-8 h-8" />,
                   title: "Streaming HD",
-                  description: "Disfruta de tus animes favoritos en la mejor calidad disponible"
+                  description: "Disfruta de animes y series en la mejor calidad disponible"
                 },
                 {
                   icon: <Heart className="w-8 h-8" />,
                   title: "Favoritos",
-                  description: "Guarda tus animes favoritos para verlos más tarde"
+                  description: "Guarda tus contenidos favoritos para verlos más tarde"
                 },
                 {
                   icon: <Clock className="w-8 h-8" />,
