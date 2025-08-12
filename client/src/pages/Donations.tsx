@@ -250,7 +250,7 @@ const Donations: React.FC = () => {
             </div>
             
             <div className="flex items-start">
-              <Calendar className="w-6 h-6 text-blue-500 mr-3 mt-1" />
+              <Calendar className="w-6 h-6 text-gray-500 mr-3 mt-1" />
               <div>
                 <h4 className="text-white font-semibold mb-2">Cancelación Gratuita</h4>
                 <p className="text-gray-300">
@@ -260,7 +260,7 @@ const Donations: React.FC = () => {
             </div>
             
             <div className="flex items-start">
-              <Crown className="w-6 h-6 text-purple-500 mr-3 mt-1" />
+              <Crown className="w-6 h-6 text-red-500 mr-3 mt-1" />
               <div>
                 <h4 className="text-white font-semibold mb-2">Calidad Premium</h4>
                 <p className="text-gray-300">

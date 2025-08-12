@@ -109,6 +109,27 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+// Verificar token (para el frontend)
+router.get('/verify', authenticateToken, (req, res) => {
+  const db = new sqlite3.Database(dbPath);
+  
+  db.get('SELECT id, username, email, premium_access_status FROM users WHERE id = ?', [req.user.userId], (err, user) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    
+    if (!user) {
+      res.status(404).json({ error: 'Usuario no encontrado' });
+      return;
+    }
+    
+    res.json({ user });
+  });
+  
+  db.close();
+});
+
 // Obtener favoritos del usuario
 router.get('/favorites', authenticateToken, (req, res) => {
   const db = new sqlite3.Database(dbPath);

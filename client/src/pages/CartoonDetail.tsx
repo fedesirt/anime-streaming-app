@@ -148,9 +148,9 @@ const CartoonDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-red-900 to-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-white text-lg">Cargando...</p>
         </div>
       </div>
@@ -159,7 +159,7 @@ const CartoonDetail: React.FC = () => {
 
   if (error || !cartoon) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-red-900 to-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
           <h2 className="text-white text-2xl font-bold mb-2">Error</h2>
@@ -174,11 +174,11 @@ const CartoonDetail: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-red-900 to-gray-900">
       {/* Efectos de fondo */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-green-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
       </div>
 
       <div className="relative z-10">
@@ -205,7 +205,7 @@ const CartoonDetail: React.FC = () => {
                 
                 {/* Botón de reproducción */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <button className="bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transform hover:scale-110 transition-all duration-300 opacity-0 group-hover:opacity-100">
+                  <button className="bg-red-500 hover:bg-red-600 text-white p-4 rounded-full shadow-lg transform hover:scale-110 transition-all duration-300 opacity-0 group-hover:opacity-100">
                     <Play className="w-8 h-8" />
                   </button>
                 </div>
@@ -225,7 +225,7 @@ const CartoonDetail: React.FC = () => {
                       <Star className="w-5 h-5 mr-2 fill-current" />
                       <span className="text-lg font-semibold">{cartoon.score}</span>
                     </div>
-                    <span className="bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-sm font-medium">
+                    <span className="bg-red-500/20 text-red-300 px-3 py-1 rounded-full text-sm font-medium">
                       {cartoon.rating}
                     </span>
                     <span className="text-gray-400">{cartoon.year}</span>
@@ -235,21 +235,21 @@ const CartoonDetail: React.FC = () => {
                 {/* Información básica */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="bg-gray-800/50 rounded-xl p-4 text-center">
-                    <div className="text-green-400 mb-2">
+                    <div className="text-red-400 mb-2">
                       <Tv className="w-6 h-6 mx-auto" />
                     </div>
                     <p className="text-gray-300 text-sm">Red</p>
                     <p className="text-white font-semibold">{cartoon.network}</p>
                   </div>
                   <div className="bg-gray-800/50 rounded-xl p-4 text-center">
-                    <div className="text-blue-400 mb-2">
+                    <div className="text-gray-400 mb-2">
                       <Film className="w-6 h-6 mx-auto" />
                     </div>
                     <p className="text-gray-300 text-sm">Género</p>
                     <p className="text-white font-semibold">{cartoon.genre}</p>
                   </div>
                   <div className="bg-gray-800/50 rounded-xl p-4 text-center">
-                    <div className="text-purple-400 mb-2">
+                    <div className="text-gray-400 mb-2">
                       <Clock className="w-6 h-6 mx-auto" />
                     </div>
                     <p className="text-gray-300 text-sm">Episodios</p>
@@ -312,7 +312,7 @@ const CartoonDetail: React.FC = () => {
                           <h4 className="text-white font-medium">Episodio {episode}</h4>
                           <p className="text-gray-400 text-sm">Título del episodio {episode}</p>
                         </div>
-                        <button className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition-colors duration-300">
+                        <button className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-colors duration-300">
                           <Play className="w-4 h-4" />
                         </button>
                       </div>
@@ -329,3 +329,4 @@ const CartoonDetail: React.FC = () => {
 };
 
 export default CartoonDetail;
+

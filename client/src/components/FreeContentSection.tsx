@@ -48,7 +48,7 @@ const FreeContentSection: React.FC = () => {
   };
 
   const AnimeCard: React.FC<{ anime: FreeAnimeContent }> = ({ anime }) => (
-    <div className="bg-dark-800 rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300">
+    <div className="bg-gray-800 rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300">
       <div className="relative">
         <img
           src={anime.image || 'https://via.placeholder.com/300x200/1f2937/ffffff?text=Anime'}
@@ -64,7 +64,7 @@ const FreeContentSection: React.FC = () => {
           </div>
         </div>
         {anime.score && (
-          <div className="absolute top-2 right-2 bg-dark-800/90 rounded-full px-2 py-1 flex items-center space-x-1">
+          <div className="absolute top-2 right-2 bg-gray-800/90 rounded-full px-2 py-1 flex items-center space-x-1">
             <Star className="w-4 h-4 text-yellow-400 fill-current" />
             <span className="text-sm font-medium text-white">{anime.score.toFixed(1)}</span>
           </div>
@@ -87,7 +87,7 @@ const FreeContentSection: React.FC = () => {
   );
 
   const VideoCard: React.FC<{ video: any }> = ({ video }) => (
-    <div className="bg-dark-800 rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300">
+    <div className="bg-gray-800 rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300">
       <div className="relative">
         <img
           src={video.snippet?.thumbnails?.medium?.url || 'https://via.placeholder.com/300x200/1f2937/ffffff?text=Video'}
@@ -121,14 +121,14 @@ const FreeContentSection: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-white text-xl">Cargando contenido gratuito...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-dark-900 py-8">
+    <div className="min-h-screen bg-gray-900 py-8">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
@@ -142,7 +142,7 @@ const FreeContentSection: React.FC = () => {
 
         {/* Tabs */}
         <div className="flex justify-center mb-8">
-          <div className="bg-dark-800 rounded-lg p-1">
+          <div className="bg-gray-800 rounded-lg p-1">
             <button
               onClick={() => setActiveTab('popular')}
               className={`px-6 py-2 rounded-md transition-colors ${
@@ -192,7 +192,7 @@ const FreeContentSection: React.FC = () => {
         </div>
 
         {/* Info Section */}
-        <div className="mt-12 bg-dark-800 rounded-lg p-6">
+        <div className="mt-12 bg-gray-800 rounded-lg p-6">
           <h3 className="text-xl font-bold text-white mb-4">
             ¿Por qué contenido gratuito?
           </h3>
@@ -218,11 +218,11 @@ const FreeContentSection: React.FC = () => {
             </div>
             
             <div className="flex items-start">
-              <Users className="w-6 h-6 text-blue-500 mr-3 mt-1" />
+              <Users className="w-6 h-6 text-gray-500 mr-3 mt-1" />
               <div>
                 <h4 className="text-white font-semibold mb-2">Videos de YouTube</h4>
                 <p className="text-gray-300">
-                  Contenido relacionado con anime desde YouTube
+                  Contenido relacionado con anime de YouTube
                 </p>
               </div>
             </div>

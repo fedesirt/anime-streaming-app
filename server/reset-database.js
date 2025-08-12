@@ -27,15 +27,15 @@ const initializeDatabase = () => {
         username TEXT UNIQUE NOT NULL,
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
-        subscription_status TEXT DEFAULT 'free',
-        subscription_end_date DATETIME,
+        premium_access_status TEXT DEFAULT 'free',
+        premium_access_end_date DATETIME,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )`, (err) => {
         if (err) console.error('Error creando tabla users:', err);
         else console.log('✅ Tabla users creada');
       });
 
-      // Tabla de planes de suscripción
+      // Tabla de opciones de donación
       db.run(`CREATE TABLE subscription_plans (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -49,7 +49,7 @@ const initializeDatabase = () => {
         else console.log('✅ Tabla subscription_plans creada');
       });
 
-      // Tabla de suscripciones
+      // Tabla de donaciones
       db.run(`CREATE TABLE subscriptions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
@@ -79,7 +79,7 @@ const initializeDatabase = () => {
         rating REAL DEFAULT 0,
         image_url TEXT,
         video_url TEXT,
-        requires_subscription BOOLEAN DEFAULT 0,
+        requires_premium BOOLEAN DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )`, (err) => {
         if (err) console.error('Error creando tabla anime:', err);
@@ -101,25 +101,31 @@ const initializeDatabase = () => {
 
       console.log('📝 Insertando datos de ejemplo...');
 
-      // Insertar planes de suscripción
+      // Insertar opciones de donación
       const samplePlans = [
         {
-          name: 'Plan Gratuito',
-          price: 0.00,
-          duration_days: 0,
-          features: 'Acceso limitado a contenido básico'
-        },
-        {
-          name: 'Plan Premium Mensual',
-          price: 3500.00,
+          name: 'Donación Pequeña',
+          price: 1000.00,
           duration_days: 30,
-          features: 'Acceso completo a todo el catálogo, sin anuncios, calidad HD'
+          features: 'Acceso completo por 30 días, sin anuncios, calidad HD'
         },
         {
-          name: 'Plan Premium Anual',
-          price: 25000.00,
+          name: 'Donación Mediana',
+          price: 2500.00,
+          duration_days: 90,
+          features: 'Acceso completo por 90 días, sin anuncios, calidad HD'
+        },
+        {
+          name: 'Donación Grande',
+          price: 5000.00,
+          duration_days: 180,
+          features: 'Acceso completo por 180 días, sin anuncios, calidad 4K'
+        },
+        {
+          name: 'Donación Extra Grande',
+          price: 10000.00,
           duration_days: 365,
-          features: 'Acceso completo a todo el catálogo, sin anuncios, calidad 4K, descargas'
+          features: 'Acceso completo por 1 año, sin anuncios, calidad 4K, descargas'
         }
       ];
 
@@ -137,7 +143,7 @@ const initializeDatabase = () => {
       });
 
       insertPlans.finalize();
-      console.log('✅ Planes de suscripción insertados');
+      console.log('✅ Opciones de donación insertadas');
 
       // Insertar animes
       const sampleAnime = [
@@ -151,7 +157,7 @@ const initializeDatabase = () => {
           rating: 9.0,
           image_url: 'https://via.placeholder.com/300x400/ff6b6b/ffffff?text=Attack+on+Titan',
           video_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
-          requires_subscription: 1
+          requires_premium: 1
         },
         {
           title: 'Death Note',
@@ -163,7 +169,7 @@ const initializeDatabase = () => {
           rating: 8.9,
           image_url: 'https://via.placeholder.com/300x400/4ecdc4/ffffff?text=Death+Note',
           video_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
-          requires_subscription: 1
+          requires_premium: 1
         },
         {
           title: 'One Piece',
@@ -175,7 +181,7 @@ const initializeDatabase = () => {
           rating: 8.8,
           image_url: 'https://via.placeholder.com/300x400/45b7d1/ffffff?text=One+Piece',
           video_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
-          requires_subscription: 0
+          requires_premium: 0
         },
         {
           title: 'Naruto',
@@ -187,7 +193,7 @@ const initializeDatabase = () => {
           rating: 8.7,
           image_url: 'https://via.placeholder.com/300x400/96ceb4/ffffff?text=Naruto',
           video_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
-          requires_subscription: 0
+          requires_premium: 0
         },
         {
           title: 'Dragon Ball Z',
@@ -199,7 +205,7 @@ const initializeDatabase = () => {
           rating: 8.6,
           image_url: 'https://via.placeholder.com/300x400/feca57/ffffff?text=Dragon+Ball+Z',
           video_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
-          requires_subscription: 0
+          requires_premium: 0
         },
         {
           title: 'Demon Slayer',
@@ -211,7 +217,7 @@ const initializeDatabase = () => {
           rating: 8.5,
           image_url: 'https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=400&h=600&fit=crop',
           video_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
-          requires_subscription: 1
+          requires_premium: 1
         },
         {
           title: 'My Hero Academia',
@@ -223,7 +229,7 @@ const initializeDatabase = () => {
           rating: 8.4,
           image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop',
           video_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
-          requires_subscription: 1
+          requires_premium: 1
         },
         {
           title: 'Fullmetal Alchemist',
@@ -235,7 +241,7 @@ const initializeDatabase = () => {
           rating: 8.3,
           image_url: 'https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=400&h=600&fit=crop',
           video_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
-          requires_subscription: 1
+          requires_premium: 1
         },
         {
           title: 'Hunter x Hunter',
@@ -247,7 +253,7 @@ const initializeDatabase = () => {
           rating: 8.2,
           image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop',
           video_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
-          requires_subscription: 1
+          requires_premium: 1
         },
         {
           title: 'Bleach',
@@ -259,12 +265,12 @@ const initializeDatabase = () => {
           rating: 8.1,
           image_url: 'https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=400&h=600&fit=crop',
           video_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
-          requires_subscription: 1
+          requires_premium: 1
         }
       ];
 
       const insertAnime = db.prepare(`INSERT INTO anime 
-        (title, description, genre, year, episodes, status, rating, image_url, video_url, requires_subscription) 
+        (title, description, genre, year, episodes, status, rating, image_url, video_url, requires_premium) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
 
       sampleAnime.forEach(anime => {
@@ -278,7 +284,7 @@ const initializeDatabase = () => {
           anime.rating,
           anime.image_url,
           anime.video_url,
-          anime.requires_subscription
+          anime.requires_premium
         ]);
       });
 

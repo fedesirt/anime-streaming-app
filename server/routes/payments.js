@@ -7,22 +7,22 @@ const path = require('path');
 
 const db = new sqlite3.Database(path.join(__dirname, '../database/anime.db'));
 
-// Crear preferencia de pago
-router.post('/create-preference', authenticateToken, async (req, res) => {
+// Crear donación usando alias de Mercado Pago
+router.post('/create-donation', authenticateToken, async (req, res) => {
   try {
     const { planId } = req.body;
     
     // Obtener información del plan
     db.get('SELECT * FROM subscription_plans WHERE id = ?', [planId], async (err, plan) => {
       if (err) {
-        return res.status(500).json({ error: 'Error al obtener el plan' });
+        return res.status(500).json({ error: 'Error al obtener la opción de donación' });
       }
       
       if (!plan) {
-        return res.status(404).json({ error: 'Plan no encontrado' });
+        return res.status(404).json({ error: 'Opción de donación no encontrada' });
       }
 
-      // Crear preferencia de Mercado Pago
+      // Crear preferencia de Mercado Pago con alias
       const preference = new Preference(client);
       
       const preferenceData = {
@@ -43,7 +43,13 @@ router.post('/create-preference', authenticateToken, async (req, res) => {
         external_reference: `user_${req.user.id}_plan_${planId}`,
         notification_url: config.webhookUrl,
         expires: true,
-        expiration_date_to: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 horas
+        expiration_date_to: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 horas
+        payer: {
+          name: req.user.username || 'Usuario',
+          email: req.user.email || 'usuario@example.com'
+        },
+        statement_descriptor: `DONACION ${plan.name.toUpperCase()}`,
+        additional_info: `Donación para ${plan.name} - Acceso premium por ${plan.duration_days} días`
       };
 
       const response = await preference.create({ body: preferenceData });
@@ -51,12 +57,15 @@ router.post('/create-preference', authenticateToken, async (req, res) => {
       res.json({
         preferenceId: response.id,
         publicKey: config.publicKey,
-        initPoint: response.init_point
+        initPoint: response.init_point,
+        alias: config.alias,
+        amount: plan.price,
+        planName: plan.name
       });
     });
   } catch (error) {
-    console.error('Error creating preference:', error);
-    res.status(500).json({ error: 'Error al crear la preferencia de pago' });
+    console.error('Error creating donation preference:', error);
+    res.status(500).json({ error: 'Error al crear la donación' });
   }
 });
 
@@ -77,7 +86,7 @@ router.post('/webhook', async (req, res) => {
         const externalReference = paymentInfo.external_reference;
         const [userId, planId] = externalReference.split('_').slice(1);
         
-        // Activar suscripción
+        // Activar acceso premium
         const plan = await new Promise((resolve, reject) => {
           db.get('SELECT * FROM subscription_plans WHERE id = ?', [planId], (err, plan) => {
             if (err) reject(err);
@@ -89,7 +98,7 @@ router.post('/webhook', async (req, res) => {
           const endDate = new Date();
           endDate.setDate(endDate.getDate() + plan.duration_days);
           
-          // Insertar suscripción
+          // Insertar acceso premium
           db.run(
             'INSERT INTO subscriptions (user_id, plan_id, start_date, end_date, status, payment_method, amount_paid) VALUES (?, ?, ?, ?, ?, ?, ?)',
             [userId, planId, new Date().toISOString(), endDate.toISOString(), 'active', 'mercadopago', plan.price],
@@ -97,14 +106,14 @@ router.post('/webhook', async (req, res) => {
               if (err) {
                 console.error('Error inserting subscription:', err);
               } else {
-                console.log(`Suscripción activada para usuario ${userId}, plan ${planId}`);
+                console.log(`Acceso premium activado para usuario ${userId}, plan ${planId}`);
               }
             }
           );
           
           // Actualizar estado del usuario
           db.run(
-            'UPDATE users SET subscription_status = ?, subscription_end_date = ? WHERE id = ?',
+            'UPDATE users SET premium_access_status = ?, premium_access_end_date = ? WHERE id = ?',
             ['premium', endDate.toISOString(), userId]
           );
         }

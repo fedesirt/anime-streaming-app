@@ -14,15 +14,15 @@ const initializeDatabase = () => {
         username TEXT UNIQUE NOT NULL,
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
-        subscription_status TEXT DEFAULT 'free',
-        subscription_end_date DATETIME,
+        premium_access_status TEXT DEFAULT 'free',
+        premium_access_end_date DATETIME,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )`, (err) => {
         if (err) console.error('Error creando tabla users:', err);
         else console.log('✅ Tabla users creada');
       });
 
-      // Tabla de planes de suscripción
+      // Tabla de opciones de donación
       db.run(`CREATE TABLE IF NOT EXISTS subscription_plans (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -36,7 +36,7 @@ const initializeDatabase = () => {
         else console.log('✅ Tabla subscription_plans creada');
       });
 
-      // Tabla de suscripciones
+      // Tabla de donaciones
       db.run(`CREATE TABLE IF NOT EXISTS subscriptions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
@@ -66,7 +66,7 @@ const initializeDatabase = () => {
         rating REAL DEFAULT 0,
         image_url TEXT,
         video_url TEXT,
-        requires_subscription BOOLEAN DEFAULT 0,
+        requires_premium BOOLEAN DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )`, (err) => {
         if (err) console.error('Error creando tabla anime:', err);
@@ -99,7 +99,7 @@ const initializeDatabase = () => {
         duration INTEGER DEFAULT 24,
         video_url TEXT,
         thumbnail_url TEXT,
-        requires_subscription BOOLEAN DEFAULT 0,
+        requires_premium BOOLEAN DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (anime_id) REFERENCES anime (id),
         FOREIGN KEY (season_id) REFERENCES seasons (id)
@@ -138,7 +138,7 @@ const initializeDatabase = () => {
 
       console.log('📝 Insertando datos de ejemplo...');
 
-      // Insertar planes de suscripción
+      // Insertar opciones de donación
       const samplePlans = [
         {
           name: 'Plan Gratuito',
@@ -174,7 +174,7 @@ const initializeDatabase = () => {
       });
 
       insertPlans.finalize();
-      console.log('✅ Planes de suscripción insertados');
+      console.log('✅ Opciones de donación insertadas');
 
       // Insertar animes
       const sampleAnime = [
@@ -188,7 +188,7 @@ const initializeDatabase = () => {
           rating: 9.0,
           image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop&crop=center',
           video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-          requires_subscription: 1
+          requires_premium: 1
         },
         {
           title: 'Death Note',
@@ -200,7 +200,7 @@ const initializeDatabase = () => {
           rating: 8.9,
           image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop&crop=center',
           video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-          requires_subscription: 1
+          requires_premium: 1
         },
         {
           title: 'One Piece',
@@ -212,7 +212,7 @@ const initializeDatabase = () => {
           rating: 8.8,
           image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop&crop=center',
           video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-          requires_subscription: 0
+          requires_premium: 0
         },
         {
           title: 'Naruto',
@@ -224,7 +224,7 @@ const initializeDatabase = () => {
           rating: 8.7,
           image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop&crop=center',
           video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-          requires_subscription: 0
+          requires_premium: 0
         },
         {
           title: 'Dragon Ball Z',
@@ -236,12 +236,12 @@ const initializeDatabase = () => {
           rating: 8.6,
           image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop&crop=center',
           video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-          requires_subscription: 0
+          requires_premium: 0
         }
       ];
 
       const insertAnime = db.prepare(`INSERT OR IGNORE INTO anime 
-        (title, description, genre, year, episodes, status, rating, image_url, video_url, requires_subscription) 
+        (title, description, genre, year, episodes, status, rating, image_url, video_url, requires_premium) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
 
       sampleAnime.forEach(anime => {
@@ -255,7 +255,7 @@ const initializeDatabase = () => {
           anime.rating,
           anime.image_url,
           anime.video_url,
-          anime.requires_subscription
+          anime.requires_premium
         ]);
       });
 
@@ -270,7 +270,7 @@ const initializeDatabase = () => {
           
           // Insertar episodios para Attack on Titan
           const insertEpisodes = db.prepare(`INSERT OR IGNORE INTO episodes 
-            (anime_id, season_id, episode_number, title, description, video_url, requires_subscription) 
+            (anime_id, season_id, episode_number, title, description, video_url, requires_premium) 
             VALUES (?, ?, ?, ?, ?, ?, ?)`);
 
           for (let i = 1; i <= 25; i++) {
@@ -281,7 +281,7 @@ const initializeDatabase = () => {
               `Episodio ${i}`,
               `Descripción del episodio ${i} de Attack on Titan`,
               'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-              1 // requires_subscription
+              1 // requires_premium
             ]);
           }
           insertEpisodes.finalize();
@@ -297,7 +297,7 @@ const initializeDatabase = () => {
           
           // Insertar episodios para Death Note
           const insertEpisodes = db.prepare(`INSERT OR IGNORE INTO episodes 
-            (anime_id, season_id, episode_number, title, description, video_url, requires_subscription) 
+            (anime_id, season_id, episode_number, title, description, video_url, requires_premium) 
             VALUES (?, ?, ?, ?, ?, ?, ?)`);
 
           for (let i = 1; i <= 37; i++) {
@@ -308,7 +308,7 @@ const initializeDatabase = () => {
               `Episodio ${i}`,
               `Descripción del episodio ${i} de Death Note`,
               'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-              1 // requires_subscription
+              1 // requires_premium
             ]);
           }
           insertEpisodes.finalize();
@@ -324,7 +324,7 @@ const initializeDatabase = () => {
           
           // Insertar episodios para One Piece
           const insertEpisodes = db.prepare(`INSERT OR IGNORE INTO episodes 
-            (anime_id, season_id, episode_number, title, description, video_url, requires_subscription) 
+            (anime_id, season_id, episode_number, title, description, video_url, requires_premium) 
             VALUES (?, ?, ?, ?, ?, ?, ?)`);
 
           for (let i = 1; i <= 61; i++) {
@@ -335,7 +335,7 @@ const initializeDatabase = () => {
               `Episodio ${i}`,
               `Descripción del episodio ${i} de One Piece`,
               'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-              0 // requires_subscription
+              0 // requires_premium
             ]);
           }
           insertEpisodes.finalize();

@@ -24,8 +24,8 @@ db.serialize(() => {
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    subscription_status TEXT DEFAULT 'free',
-    subscription_end_date DATETIME,
+    premium_access_status TEXT DEFAULT 'free',
+    premium_access_end_date DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
@@ -64,7 +64,7 @@ db.serialize(() => {
     rating REAL DEFAULT 0,
     image_url TEXT,
     video_url TEXT,
-    requires_subscription BOOLEAN DEFAULT 0,
+    requires_premium BOOLEAN DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
@@ -88,7 +88,7 @@ db.serialize(() => {
     description TEXT,
     duration INTEGER DEFAULT 24,
     video_url TEXT,
-    requires_subscription BOOLEAN DEFAULT 0,
+    requires_premium BOOLEAN DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (anime_id) REFERENCES anime (id),
     FOREIGN KEY (season_id) REFERENCES seasons (id)
@@ -129,7 +129,7 @@ db.serialize(() => {
       rating: 9.0,
       image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop&crop=center',
       video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-      requires_subscription: 1
+      requires_premium: 1
     },
     {
       title: 'Death Note',
@@ -141,7 +141,7 @@ db.serialize(() => {
       rating: 8.9,
       image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop&crop=center',
       video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-      requires_subscription: 1
+      requires_premium: 1
     },
     {
       title: 'One Piece',
@@ -153,7 +153,7 @@ db.serialize(() => {
       rating: 8.8,
       image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop&crop=center',
       video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-      requires_subscription: 0
+      requires_premium: 0
     },
     {
       title: 'Naruto',
@@ -165,7 +165,7 @@ db.serialize(() => {
       rating: 8.7,
       image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop&crop=center',
       video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-      requires_subscription: 0
+      requires_premium: 0
     },
     {
       title: 'Dragon Ball Z',
@@ -177,12 +177,12 @@ db.serialize(() => {
       rating: 8.6,
       image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop&crop=center',
       video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-      requires_subscription: 0
+      requires_premium: 0
     }
   ];
 
   const insertAnime = db.prepare(`INSERT INTO anime 
-    (title, description, genre, year, episodes, status, rating, image_url, video_url, requires_subscription) 
+    (title, description, genre, year, episodes, status, rating, image_url, video_url, requires_premium) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
 
   sampleAnime.forEach(anime => {
@@ -196,7 +196,7 @@ db.serialize(() => {
       anime.rating,
       anime.image_url,
       anime.video_url,
-      anime.requires_subscription
+      anime.requires_premium
     ]);
   });
 
@@ -210,7 +210,7 @@ db.serialize(() => {
       console.log('✅ Temporada 1 de Attack on Titan insertada');
       
       const insertEpisodes = db.prepare(`INSERT INTO episodes 
-        (anime_id, season_id, episode_number, title, description, video_url, requires_subscription) 
+        (anime_id, season_id, episode_number, title, description, video_url, requires_premium) 
         VALUES (?, ?, ?, ?, ?, ?, ?)`);
 
       for (let i = 1; i <= 25; i++) {
@@ -221,7 +221,7 @@ db.serialize(() => {
           `Episodio ${i}`,
           `Descripción del episodio ${i} de Attack on Titan`,
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-          1 // requires_subscription
+          1 // requires_premium
         ]);
       }
       insertEpisodes.finalize();
@@ -235,7 +235,7 @@ db.serialize(() => {
       console.log('✅ Temporada 1 de Death Note insertada');
       
       const insertEpisodes = db.prepare(`INSERT INTO episodes 
-        (anime_id, season_id, episode_number, title, description, video_url, requires_subscription) 
+        (anime_id, season_id, episode_number, title, description, video_url, requires_premium) 
         VALUES (?, ?, ?, ?, ?, ?, ?)`);
 
       for (let i = 1; i <= 37; i++) {
@@ -246,7 +246,7 @@ db.serialize(() => {
           `Episodio ${i}`,
           `Descripción del episodio ${i} de Death Note`,
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-          1 // requires_subscription
+          1 // requires_premium
         ]);
       }
       insertEpisodes.finalize();
@@ -260,7 +260,7 @@ db.serialize(() => {
       console.log('✅ Temporada 1 de One Piece insertada');
       
       const insertEpisodes = db.prepare(`INSERT INTO episodes 
-        (anime_id, season_id, episode_number, title, description, video_url, requires_subscription) 
+        (anime_id, season_id, episode_number, title, description, video_url, requires_premium) 
         VALUES (?, ?, ?, ?, ?, ?, ?)`);
 
       for (let i = 1; i <= 50; i++) {
@@ -271,7 +271,7 @@ db.serialize(() => {
           `Episodio ${i}`,
           `Descripción del episodio ${i} de One Piece`,
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-          0 // requires_subscription
+          0 // requires_premium
         ]);
       }
       insertEpisodes.finalize();

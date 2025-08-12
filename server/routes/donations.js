@@ -25,22 +25,22 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Obtener todos los planes de suscripción
-router.get('/plans', async (req, res) => {
+// Obtener todas las opciones de donación
+router.get('/options', async (req, res) => {
   const db = new sqlite3.Database(dbPath);
   
-  db.all('SELECT * FROM subscription_plans WHERE is_active = 1 ORDER BY price ASC', (err, plans) => {
+  db.all('SELECT * FROM subscription_plans WHERE is_active = 1 ORDER BY price ASC', (err, options) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json(plans);
+    res.json(options);
   });
   
   db.close();
 });
 
-// Obtener suscripción actual del usuario
+// Obtener acceso premium actual del usuario
 router.get('/current', authenticateToken, async (req, res) => {
   const db = new sqlite3.Database(dbPath);
   
@@ -53,36 +53,36 @@ router.get('/current', authenticateToken, async (req, res) => {
     LIMIT 1
   `;
   
-  db.get(query, [req.user.userId], (err, subscription) => {
+  db.get(query, [req.user.userId], (err, donation) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
     
-    if (!subscription) {
+    if (!donation) {
       res.json({ 
-        subscription: null, 
+        donation: null, 
         status: 'free',
-        message: 'No tienes suscripción activa' 
+        message: 'No tienes acceso premium activo' 
       });
       return;
     }
     
-    // Verificar si la suscripción ha expirado
+    // Verificar si el acceso premium ha expirado
     const now = new Date();
-    const endDate = new Date(subscription.end_date);
+    const endDate = new Date(donation.end_date);
     
     if (endDate < now) {
-      // Marcar suscripción como expirada
-      db.run('UPDATE subscriptions SET status = ? WHERE id = ?', ['expired', subscription.id]);
+      // Marcar acceso premium como expirado
+      db.run('UPDATE subscriptions SET status = ? WHERE id = ?', ['expired', donation.id]);
       res.json({ 
-        subscription: null, 
+        donation: null, 
         status: 'expired',
-        message: 'Tu suscripción ha expirado' 
+        message: 'Tu acceso premium ha expirado' 
       });
     } else {
       res.json({ 
-        subscription,
+        donation,
         status: 'active',
         daysRemaining: Math.ceil((endDate - now) / (1000 * 60 * 60 * 24))
       });
@@ -92,17 +92,17 @@ router.get('/current', authenticateToken, async (req, res) => {
   db.close();
 });
 
-// Crear nueva suscripción
-router.post('/subscribe', authenticateToken, async (req, res) => {
+// Crear nuevo acceso premium
+router.post('/create', authenticateToken, async (req, res) => {
   const { planId, paymentMethod } = req.body;
   
   if (!planId) {
-    return res.status(400).json({ error: 'Plan ID es requerido' });
+    return res.status(400).json({ error: 'ID de opción de donación es requerido' });
   }
   
   const db = new sqlite3.Database(dbPath);
   
-  // Obtener información del plan
+  // Obtener información de la opción de donación
   db.get('SELECT * FROM subscription_plans WHERE id = ? AND is_active = 1', [planId], (err, plan) => {
     if (err) {
       res.status(500).json({ error: err.message });
@@ -110,15 +110,15 @@ router.post('/subscribe', authenticateToken, async (req, res) => {
     }
     
     if (!plan) {
-      res.status(404).json({ error: 'Plan no encontrado' });
+      res.status(404).json({ error: 'Opción de donación no encontrada' });
       return;
     }
     
-    // Calcular fecha de fin de suscripción
+    // Calcular fecha de fin de acceso premium
     const startDate = new Date();
     const endDate = new Date(startDate.getTime() + (plan.duration_days * 24 * 60 * 60 * 1000));
     
-    // Crear la suscripción
+    // Crear el acceso premium
     const insertQuery = `
       INSERT INTO subscriptions (user_id, plan_id, end_date, payment_method, amount_paid)
       VALUES (?, ?, ?, ?, ?)
@@ -128,7 +128,7 @@ router.post('/subscribe', authenticateToken, async (req, res) => {
       req.user.userId,
       planId,
       endDate.toISOString(),
-      paymentMethod || 'tarjeta',
+      paymentMethod || 'mercadopago',
       plan.price
     ], function(err) {
       if (err) {
@@ -136,10 +136,10 @@ router.post('/subscribe', authenticateToken, async (req, res) => {
         return;
       }
       
-      // Actualizar estado de suscripción del usuario
+      // Actualizar estado de acceso premium del usuario
       const updateUserQuery = `
         UPDATE users 
-        SET subscription_status = 'premium', subscription_end_date = ?
+        SET premium_access_status = 'premium', premium_access_end_date = ?
         WHERE id = ?
       `;
       
@@ -150,8 +150,8 @@ router.post('/subscribe', authenticateToken, async (req, res) => {
         }
         
         res.json({
-          message: 'Suscripción creada exitosamente',
-          subscription: {
+          message: 'Acceso premium creado exitosamente',
+          donation: {
             id: this.lastID,
             planName: plan.name,
             startDate: startDate.toISOString(),
@@ -166,11 +166,11 @@ router.post('/subscribe', authenticateToken, async (req, res) => {
   db.close();
 });
 
-// Cancelar suscripción
+// Cancelar acceso premium
 router.post('/cancel', authenticateToken, async (req, res) => {
   const db = new sqlite3.Database(dbPath);
   
-  // Marcar suscripción como cancelada
+  // Marcar acceso premium como cancelado
   const updateQuery = `
     UPDATE subscriptions 
     SET status = 'cancelled' 
@@ -186,7 +186,7 @@ router.post('/cancel', authenticateToken, async (req, res) => {
     // Actualizar estado del usuario
     const updateUserQuery = `
       UPDATE users 
-      SET subscription_status = 'free', subscription_end_date = NULL
+      SET premium_access_status = 'free', premium_access_end_date = NULL
       WHERE id = ?
     `;
     
@@ -196,14 +196,14 @@ router.post('/cancel', authenticateToken, async (req, res) => {
         return;
       }
       
-      res.json({ message: 'Suscripción cancelada exitosamente' });
+      res.json({ message: 'Acceso premium cancelado exitosamente' });
     });
   });
   
   db.close();
 });
 
-// Obtener historial de suscripciones
+// Obtener historial de donaciones
 router.get('/history', authenticateToken, async (req, res) => {
   const db = new sqlite3.Database(dbPath);
   
@@ -215,12 +215,12 @@ router.get('/history', authenticateToken, async (req, res) => {
     ORDER BY s.created_at DESC
   `;
   
-  db.all(query, [req.user.userId], (err, subscriptions) => {
+  db.all(query, [req.user.userId], (err, donations) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json(subscriptions);
+    res.json(donations);
   });
   
   db.close();
@@ -231,7 +231,7 @@ router.get('/check-access/:animeId', authenticateToken, async (req, res) => {
   const { animeId } = req.params;
   const db = new sqlite3.Database(dbPath);
   
-  // Verificar si el anime requiere suscripción
+  // Verificar si el anime requiere acceso premium
   db.get('SELECT requires_subscription FROM anime WHERE id = ?', [animeId], (err, anime) => {
     if (err) {
       res.status(500).json({ error: err.message });
@@ -243,13 +243,13 @@ router.get('/check-access/:animeId', authenticateToken, async (req, res) => {
       return;
     }
     
-    // Si no requiere suscripción, permitir acceso
+    // Si no requiere acceso premium, permitir acceso
     if (!anime.requires_subscription) {
       res.json({ hasAccess: true, reason: 'Contenido gratuito' });
       return;
     }
     
-    // Verificar si el usuario tiene suscripción activa
+    // Verificar si el usuario tiene acceso premium activo
     const subscriptionQuery = `
       SELECT s.* FROM subscriptions s
       WHERE s.user_id = ? AND s.status = 'active' AND s.end_date > datetime('now')
@@ -264,12 +264,12 @@ router.get('/check-access/:animeId', authenticateToken, async (req, res) => {
       }
       
       if (subscription) {
-        res.json({ hasAccess: true, reason: 'Suscripción activa' });
+        res.json({ hasAccess: true, reason: 'Acceso premium activo' });
       } else {
         res.json({ 
           hasAccess: false, 
-          reason: 'Se requiere suscripción premium',
-          message: 'Este contenido requiere una suscripción premium'
+          reason: 'Se requiere acceso premium',
+          message: 'Este contenido requiere acceso premium'
         });
       }
     });

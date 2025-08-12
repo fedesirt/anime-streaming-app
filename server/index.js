@@ -5,7 +5,7 @@ const compression = require('compression');
 const path = require('path');
 const animeRoutes = require('./routes/anime');
 const userRoutes = require('./routes/users');
-const subscriptionRoutes = require('./routes/subscriptions');
+const donationRoutes = require('./routes/donations');
 const paymentRoutes = require('./routes/payments');
 const episodeRoutes = require('./routes/episodes');
 const { initializeDatabase } = require('./database/init');
@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Rutas
 app.use('/api/anime', animeRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/donations', donationRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/episodes', episodeRoutes);
 

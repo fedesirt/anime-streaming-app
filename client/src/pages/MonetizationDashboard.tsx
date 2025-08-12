@@ -81,14 +81,14 @@ const MonetizationDashboard: React.FC = () => {
               value: formatNumber(revenueMetrics?.activeDonations || 0),
       change: 8.2,
       icon: <Users className="w-6 h-6" />,
-      color: 'bg-blue-500'
+      color: 'bg-gray-500'
     },
     {
       title: 'Tasa de Conversión',
       value: `${(revenueMetrics?.conversionRate || 0).toFixed(1)}%`,
       change: 2.1,
       icon: <Target className="w-6 h-6" />,
-      color: 'bg-purple-500'
+      color: 'bg-red-500'
     },
     {
       title: 'ARPU',
@@ -102,14 +102,14 @@ const MonetizationDashboard: React.FC = () => {
       value: `${Math.round((watchTimeAnalytics?.totalWatchTime || 0) / 3600)}h`,
       change: 15.3,
       icon: <Clock className="w-6 h-6" />,
-      color: 'bg-indigo-500'
+      color: 'bg-red-600'
     },
     {
       title: 'Vistas Totales',
       value: formatNumber(watchTimeAnalytics?.totalViews || 0),
       change: 22.7,
       icon: <Eye className="w-6 h-6" />,
-      color: 'bg-pink-500'
+      color: 'bg-gray-600'
     }
   ];
 
@@ -157,7 +157,7 @@ const MonetizationDashboard: React.FC = () => {
           {/* Predicción de Ingresos */}
           <div className="bg-dark-800 rounded-lg p-6">
             <div className="flex items-center mb-4">
-              <BarChart3 className="w-6 h-6 text-blue-400 mr-2" />
+              <BarChart3 className="w-6 h-6 text-gray-400 mr-2" />
               <h3 className="text-xl font-bold text-white">Predicción de Ingresos</h3>
             </div>
             <div className="space-y-3">
@@ -226,7 +226,7 @@ const MonetizationDashboard: React.FC = () => {
             </div>
             
             <div className="text-center">
-              <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 bg-gray-500 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Eye className="w-6 h-6 text-white" />
               </div>
               <h4 className="text-white font-semibold mb-2">Publicidad</h4>
@@ -246,7 +246,7 @@ const MonetizationDashboard: React.FC = () => {
             </div>
             
             <div className="text-center">
-              <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Users className="w-6 h-6 text-white" />
               </div>
               <h4 className="text-white font-semibold mb-2">Referidos</h4>

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios from 'axios';
+import apiClient from '../config/axios';
 
 interface User {
   id: number;
@@ -38,29 +38,49 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (token) {
-      // Configurar axios para incluir el token en todas las peticiones
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      // Verificar si el token sigue siendo válido
+      verifyToken();
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   }, [token]);
+
+  const verifyToken = async () => {
+    try {
+      const response = await apiClient.get('/api/users/verify');
+      setUser(response.data.user);
+    } catch (error) {
+      // Token inválido, limpiar estado
+      logout();
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await axios.post('/api/users/login', { email, password });
+      const response = await apiClient.post('/api/users/login', { email, password });
       const { token: newToken, user: userData } = response.data;
       
       setToken(newToken);
       setUser(userData);
       localStorage.setItem('token', newToken);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
     } catch (error: any) {
-      throw new Error(error.response?.data?.error || 'Error en el login');
+      if (error.response?.status === 401) {
+        throw new Error('Email o contraseña incorrectos');
+      } else if (error.response?.status === 400) {
+        throw new Error(error.response.data.error || 'Datos inválidos');
+      } else if (error.code === 'ECONNREFUSED') {
+        throw new Error('No se puede conectar con el servidor. Verifica que esté ejecutándose.');
+      } else {
+        throw new Error(error.response?.data?.error || 'Error en el servidor. Intenta nuevamente.');
+      }
     }
   };
 
   const register = async (username: string, email: string, password: string) => {
     try {
-      const response = await axios.post('/api/users/register', { 
+      const response = await apiClient.post('/api/users/register', { 
         username, 
         email, 
         password 
@@ -70,9 +90,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setToken(newToken);
       setUser(userData);
       localStorage.setItem('token', newToken);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
     } catch (error: any) {
-      throw new Error(error.response?.data?.error || 'Error en el registro');
+      if (error.response?.status === 400) {
+        if (error.response.data.error.includes('ya existe')) {
+          throw new Error('El usuario o email ya está registrado');
+        } else {
+          throw new Error(error.response.data.error || 'Datos inválidos');
+        }
+      } else if (error.code === 'ECONNREFUSED') {
+        throw new Error('No se puede conectar con el servidor. Verifica que esté ejecutándose.');
+      } else {
+        throw new Error(error.response?.data?.error || 'Error en el servidor. Intenta nuevamente.');
+      }
     }
   };
 
@@ -80,7 +109,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setToken(null);
     setUser(null);
     localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
   };
 
   const value = {

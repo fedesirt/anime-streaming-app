@@ -58,7 +58,7 @@ const DemoContentSection: React.FC = () => {
         {/* Demo Content */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {demoAnimes.map((anime) => (
-            <div key={anime.id} className="bg-dark-800 rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300">
+            <div key={anime.id} className="bg-gray-800 rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300">
               <div className="relative">
                 <img
                   src={anime.image}
@@ -86,7 +86,7 @@ const DemoContentSection: React.FC = () => {
                     <span>Premium</span>
                   </div>
                 )}
-                <div className="absolute top-2 left-2 bg-dark-800/90 rounded-full px-2 py-1 flex items-center space-x-1">
+                <div className="absolute top-2 left-2 bg-gray-800/90 rounded-full px-2 py-1 flex items-center space-x-1">
                   <Star className="w-4 h-4 text-yellow-400 fill-current" />
                   <span className="text-sm font-medium text-white">{anime.rating}</span>
                 </div>
@@ -143,19 +143,19 @@ const DemoContentSection: React.FC = () => {
         </div>
 
         {/* Demo Notice */}
-        <div className="mt-8 bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+        <div className="mt-8 bg-gray-900/20 border border-gray-500/30 rounded-lg p-4">
           <div className="flex items-start">
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-bold">i</span>
               </div>
             </div>
             <div className="ml-3">
-              <h4 className="text-blue-300 font-semibold">Esta es una demostración</h4>
-              <p className="text-blue-200 text-sm mt-1">
+              <h4 className="text-gray-300 font-semibold">Esta es una demostración</h4>
+              <p className="text-gray-200 text-sm mt-1">
                 Para implementar contenido real de anime, necesitarías:
               </p>
-              <ul className="text-blue-200 text-sm mt-2 space-y-1">
+              <ul className="text-gray-200 text-sm mt-2 space-y-1">
                 <li>• Licencias de distribución de anime</li>
                 <li>• Videos de alta calidad de los episodios</li>
                 <li>• Servidores de streaming optimizados</li>
